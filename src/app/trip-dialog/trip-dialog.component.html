@@ -1,0 +1,79 @@
+<div class="backdrop" (click)="cancelled.emit()">
+  <form class="dialog" (click)="$event.stopPropagation()" (ngSubmit)="submit()" #f="ngForm" novalidate>
+    <h2>{{ isEdit() ? 'Edit trip' : 'New trip' }}</h2>
+
+    <div class="row">
+      <label>
+        Country
+        <input name="country" [(ngModel)]="form.country" (ngModelChange)="invalidateWeather()" placeholder="e.g. Italy" required />
+      </label>
+      <label>
+        City
+        <input name="city" [(ngModel)]="form.city" (ngModelChange)="invalidateWeather()" placeholder="e.g. Rome" required />
+      </label>
+    </div>
+
+    <div class="row">
+      <label>
+        Date
+        <input type="date" name="date" [(ngModel)]="form.date" (ngModelChange)="invalidateWeather()" required />
+      </label>
+      <label>
+        Start
+        <select name="startHour" [(ngModel)]="form.startHour">
+          @for (h of hours; track h) {
+            <option [ngValue]="h">{{ formatHour(h) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Duration
+        <select name="duration" [(ngModel)]="form.duration">
+          @for (d of durations; track d) {
+            <option [ngValue]="d">{{ d }} h</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <label>
+      Trip cost (PLN)
+      <input type="number" min="0" step="10" name="cost" [(ngModel)]="form.cost" />
+    </label>
+
+    <section class="weather">
+      <div class="weather-head">
+        <strong>Weather</strong>
+        <button type="button" class="secondary" (click)="checkWeather()" [disabled]="loading()">
+          {{ loading() ? 'Loading…' : 'Check weather' }}
+        </button>
+      </div>
+
+      @if (form.weather; as w) {
+        <div class="weather-result">
+          <span class="big">{{ w.icon }}</span>
+          <div>
+            <div>{{ w.summary }}, {{ w.tempMin }}° / {{ w.tempMax }}°C</div>
+            <small>
+              Precipitation: {{ w.precipitation }} mm ·
+              {{ w.source === 'forecast' ? 'forecast' : 'historical data' }} (Open-Meteo)
+            </small>
+          </div>
+        </div>
+      } @else if (error()) {
+        <p class="error">{{ error() }}</p>
+      } @else {
+        <p class="hint">Loaded automatically after saving if you skip this step.</p>
+      }
+    </section>
+
+    <div class="actions">
+      @if (isEdit()) {
+        <button type="button" class="danger" (click)="deleted.emit()">Delete</button>
+      }
+      <span class="spacer"></span>
+      <button type="button" class="secondary" (click)="cancelled.emit()">Cancel</button>
+      <button type="submit" class="primary" [disabled]="!canSubmit">Save</button>
+    </div>
+  </form>
+</div>

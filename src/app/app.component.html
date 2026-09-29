@@ -1,0 +1,110 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo" aria-hidden="true">✈</div>
+    <nav>
+      <button class="nav-item" (click)="goToday(); view.set('schedule')">Calendar</button>
+      <button class="nav-item" [class.active]="view() === 'schedule'" (click)="view.set('schedule')">Schedule</button>
+      <button class="nav-item" [class.active]="view() === 'agenda'" (click)="view.set('agenda')">Agenda</button>
+    </nav>
+    <div class="sidebar-foot">
+      <small>Total planned</small>
+      <strong>{{ totalCost() | currency: 'PLN' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </div>
+  </aside>
+
+  <main class="content">
+    @if (view() === 'schedule') {
+      <header class="toolbar">
+        <button (click)="shiftWeek(-1)" aria-label="Previous week">‹</button>
+        <button (click)="goToday()">Today</button>
+        <button (click)="shiftWeek(1)" aria-label="Next week">›</button>
+        <h1>{{ weekStart() | date: 'd MMM' }} – {{ weekEnd() | date: 'd MMM yyyy' }}</h1>
+        <span class="tip">Click a time slot to plan a trip</span>
+      </header>
+
+      <div class="grid">
+        <div class="head-row">
+          <div class="corner"></div>
+          @for (day of days(); track day.iso) {
+            <div class="day-head" [class.today]="day.iso === todayIso">
+              {{ day.date | date: 'EEEE' }}
+              <span>{{ day.date | date: 'd MMM' }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="body-row">
+          <div class="time-col">
+            @for (h of hours; track h) {
+              <div class="time">{{ formatHour(h) }}</div>
+            }
+          </div>
+
+          @for (day of days(); track day.iso) {
+            <div class="day-col" [class.today]="day.iso === todayIso">
+              @for (h of hours; track h) {
+                <div class="cell" (click)="openNew(day.iso, h)"></div>
+              }
+              @for (trip of tripsOn(day.iso); track trip.id) {
+                <div
+                  class="trip"
+                  [style.background]="trip.color"
+                  [style.top.px]="top(trip) * 64"
+                  [style.height.px]="trip.duration * 64 - 4"
+                  (click)="openEdit(trip, $event)"
+                >
+                  <b>{{ trip.city }}, {{ trip.country }}</b>
+                  <span>{{ formatHour(trip.startHour) }} – {{ formatHour(trip.startHour + trip.duration) }}</span>
+                  <span>{{ trip.cost | currency: 'PLN' : 'symbol-narrow' : '1.0-0' }}</span>
+                  @if (trip.weather; as w) {
+                    <span class="w">{{ w.icon }} {{ w.tempMin }}° / {{ w.tempMax }}°C · {{ w.summary }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <header class="toolbar">
+        <h1>Agenda</h1>
+        <span class="tip">{{ sortedTrips().length }} trips · total {{ totalCost() | currency: 'PLN' : 'symbol-narrow' : '1.0-0' }}</span>
+      </header>
+
+      <div class="agenda">
+        @for (trip of sortedTrips(); track trip.id) {
+          <button class="agenda-item" (click)="openEdit(trip)">
+            <span class="swatch" [style.background]="trip.color"></span>
+            <span class="when">
+              {{ trip.date | date: 'EEE, d MMM yyyy' }}<br />
+              <small>{{ formatHour(trip.startHour) }} – {{ formatHour(trip.startHour + trip.duration) }}</small>
+            </span>
+            <span class="where">
+              <b>{{ trip.city }}</b>, {{ trip.country }}
+            </span>
+            <span class="wx">
+              @if (trip.weather; as w) {
+                {{ w.icon }} {{ w.tempMin }}° / {{ w.tempMax }}°C
+              } @else {
+                –
+              }
+            </span>
+            <span class="cost">{{ trip.cost | currency: 'PLN' : 'symbol-narrow' : '1.0-0' }}</span>
+          </button>
+        } @empty {
+          <p class="empty">No trips yet. Open the Schedule and click a time slot to add one.</p>
+        }
+      </div>
+    }
+  </main>
+</div>
+
+@if (dialog(); as d) {
+  <app-trip-dialog
+    [trip]="d.draft"
+    [isEdit]="!!d.editId"
+    (saved)="onSave($event)"
+    (cancelled)="dialog.set(null)"
+    (deleted)="onDelete()"
+  />
+}
