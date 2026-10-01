@@ -1,17 +1,14 @@
-/** Formats a local date as YYYY-MM-DD (without timezone shifts). */
 export function toIso(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${m}-${day}`;
 }
 
-/** Parses YYYY-MM-DD as a local date. */
 export function parseIso(s: string): Date {
   const [y, m, d] = s.split('-').map(Number);
   return new Date(y, m - 1, d);
 }
 
-/** Monday of the week containing the given date. */
 export function startOfWeek(d: Date): Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   x.setDate(x.getDate() - ((x.getDay() + 6) % 7));

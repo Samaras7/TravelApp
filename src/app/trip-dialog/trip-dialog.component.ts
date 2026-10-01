@@ -5,8 +5,7 @@ import { TripDraft, Weather } from '../models/trip.model';
 import { WeatherService } from '../services/weather.service';
 
 export const GRID_START_HOUR = 6;
-export const GRID_END_HOUR = 23; // exclusive
-
+export const GRID_END_HOUR = 23;
 @Component({
   selector: 'app-trip-dialog',
   imports: [FormsModule],
@@ -35,7 +34,6 @@ export class TripDialogComponent implements OnInit {
     this.form = { ...this.trip() };
   }
 
-  /** Any change to the place or date makes the stored weather outdated. */
   invalidateWeather(): void {
     this.form.weather = undefined;
     this.error.set('');

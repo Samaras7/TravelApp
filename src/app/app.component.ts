@@ -94,7 +94,6 @@ export class AppComponent {
     }
     this.dialog.set(null);
 
-    // Weather was not checked in the dialog -> fetch it in the background.
     if (!draft.weather) {
       this.weatherApi.getWeather(draft.city, draft.country, draft.date).subscribe({
         next: (w) => this.tripService.setWeather(id, w),
@@ -102,7 +101,6 @@ export class AppComponent {
       });
     }
 
-    // Jump to the week that contains the saved trip.
     this.weekStart.set(startOfWeek(parseIso(draft.date)));
   }
 

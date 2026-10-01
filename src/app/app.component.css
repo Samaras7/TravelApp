@@ -11,7 +11,6 @@
   height: 100%;
 }
 
-/* ---------- sidebar ---------- */
 .sidebar {
   width: 150px;
   flex: none;
@@ -63,7 +62,6 @@
   font-size: 16px;
 }
 
-/* ---------- content ---------- */
 .content {
   flex: 1;
   min-width: 0;
@@ -100,7 +98,6 @@
   font-size: 13px;
 }
 
-/* ---------- week grid ---------- */
 .grid {
   flex: 1;
   overflow: auto;
@@ -190,7 +187,6 @@
   filter: brightness(1.08);
 }
 
-/* ---------- agenda ---------- */
 .agenda {
   padding: 14px;
   overflow: auto;

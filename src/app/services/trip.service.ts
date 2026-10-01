@@ -12,10 +12,6 @@ function colorFor(text: string): string {
   return COLORS[hash % COLORS.length];
 }
 
-/**
- * Keeps all trips in a signal and mirrors them to localStorage,
- * so entries survive page reloads.
- */
 @Injectable({ providedIn: 'root' })
 export class TripService {
   readonly trips = signal<Trip[]>(this.load());
@@ -25,8 +21,9 @@ export class TripService {
       const value = this.trips();
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-      } catch {
-        /* storage unavailable (private mode, quota) - keep working in memory */
+      } 
+      catch 
+      {
       }
     });
   }

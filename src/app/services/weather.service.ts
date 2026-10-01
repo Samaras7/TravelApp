@@ -4,12 +4,6 @@ import { Observable, map, switchMap, throwError } from 'rxjs';
 import { diffInDays, parseIso } from '../models/date-utils';
 import { Weather } from '../models/trip.model';
 
-/**
- * Weather comes from the free Open-Meteo REST API (no API key needed):
- *  - Geocoding API: city name -> coordinates
- *  - Forecast API:  daily forecast (today .. +16 days)
- *  - Archive API:   historical daily weather (past dates)
- */
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const ARCHIVE_URL = 'https://archive-api.open-meteo.com/v1/archive';
@@ -36,7 +30,6 @@ interface DailyResponse {
   };
 }
 
-/** WMO weather interpretation codes -> label + emoji. */
 function describe(code: number): { summary: string; icon: string } {
   if (code === 0) return { summary: 'Clear sky', icon: '☀️' };
   if (code <= 2) return { summary: 'Partly cloudy', icon: '⛅' };
