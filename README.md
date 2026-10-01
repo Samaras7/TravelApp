@@ -24,18 +24,6 @@ npm start          # http://localhost:4200
 
 Production build: `npm run build`.
 
-## Screenshots PDF
-
-With the app running (`npm start`) in another terminal:
-
-```bash
-npx playwright install chromium   # first time only
-npm run screenshots
-```
-
-This creates `docs/screenshots/*.png` and `docs/travel-planner-screenshots.pdf`
-(the PDF required by the assignment).
-
 ## Project structure
 
 ```
